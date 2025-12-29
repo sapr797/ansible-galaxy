@@ -1,0 +1,22 @@
+---
+- name: Converge
+  hosts: all
+
+  pre_tasks:
+    - name: Debug info
+      debug:
+        msg: "Installing Vector on {{ ansible_distribution }}"
+
+  roles:
+    - role: ../../
+
+  post_tasks:
+    - name: Verify Vector installation
+      shell: |
+        /usr/local/bin/vector --version
+      register: vector_version
+      changed_when: false
+
+    - name: Show Vector version
+      debug:
+        msg: "Installed Vector: {{ vector_version.stdout }}"

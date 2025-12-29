@@ -1,0 +1,16 @@
+---
+# Configuration for ansible-lint
+warn_list:
+  - 'role-name'  # Warn instead of error for role name
+skip_list:
+  - 'schema'  # Skip schema warnings for molecule
+  - 'name'  # Skip name formatting warnings
+  - 'fqcn-builtins'  # Skip FQCN for builtins
+exclude_paths:
+  - molecule/
+  - .molecule/
+  - .cache/
+  - meta/
+parseable: true
+quiet: true
+offline: true

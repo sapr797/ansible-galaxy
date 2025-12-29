@@ -1,0 +1,11 @@
+# Basic Vector configuration
+[sources.generate_syslog]
+type = "demo_logs"
+format = "syslog"
+interval = 1.0
+
+[sinks.print]
+type = "console"
+inputs = [ "generate_syslog" ]
+target = "stdout"
+encoding.codec = "json"

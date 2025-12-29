@@ -1,0 +1,18 @@
+---
+# defaults file for vector-role
+
+# Vector version
+vector_version: "0.35.0"
+
+# Installation directories
+vector_config_dir: /etc/vector
+vector_data_dir: /var/lib/vector
+vector_log_dir: /var/log/vector
+
+# Service user
+vector_user: vector
+vector_group: vector
+
+# Download URL (split for line length)
+vector_download_base: "https://packages.timber.io/vector"
+vector_download_path: "/{{ vector_version }}/vector-{{ vector_version }}"
