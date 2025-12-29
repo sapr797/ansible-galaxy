@@ -1,18 +1,25 @@
 ---
 galaxy_info:
-  namespace: "your_namespace"
-  role_name: "vector"
-  author: "Your Name"
-  description: "Vector logging agent"
-  license: "MIT"
+  namespace: sapr797
+  role_name: vector_role
+  author: sapr797
+  description: Ansible role for installing and configuring Vector logging agent
+  company: ""
+  license: MIT
   min_ansible_version: "2.9"
   platforms:
     - name: Ubuntu
       versions:
         - focal
         - jammy
+    - name: EL
+      versions:
+        - 8
+        - 9
   galaxy_tags:
     - logging
     - monitoring
+    - observability
+    - vector
 
 dependencies: []
