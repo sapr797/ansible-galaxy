@@ -1,0 +1,36 @@
+---
+- name: Debug message
+  debug:
+    msg: "Vector role is executing"
+
+- name: Create test file (instead of actual installation for testing)
+  copy:
+    content: |
+      Vector would be installed here
+      For testing purposes, we just create this file
+      Actual installation would use: apt install vector
+    dest: /tmp/vector-test-installation.txt
+
+- name: Create Vector config directory
+  file:
+    path: /etc/vector
+    state: directory
+    mode: '0755'
+
+- name: Create sample Vector config
+  copy:
+    content: |
+      # Sample Vector configuration
+      sources:
+        demo:
+          type: "demo_logs"
+          format: "json"
+      
+      sinks:
+        stdout:
+          type: "console"
+          inputs: ["demo"]
+          encoding:
+            codec: "json"
+    dest: /etc/vector/vector.yaml
+    mode: '0644'

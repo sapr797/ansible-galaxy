@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  namespace: "your_namespace"
+  role_name: "vector"
+  author: "Your Name"
+  description: "Vector logging agent"
+  license: "MIT"
+  min_ansible_version: "2.9"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+  galaxy_tags:
+    - logging
+    - monitoring
+
+dependencies: []
