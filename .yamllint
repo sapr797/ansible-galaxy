@@ -10,39 +10,5 @@ rules:
   octal-values:
     forbid-implicit-octal: true
     forbid-explicit-octal: true
-  
-  # Дополнительные настройки для вашего кода
-  line-length:
-    max: 120
-    allow-non-breakable-words: true
-    allow-non-breakable-inline-mappings: true
-  
-  indentation:
-    spaces: 2
-    indent-sequences: true
-  
-  document-start:
-    present: true
-  
-  trailing-spaces: enable
-  
-  empty-lines:
-    max: 1
-    max-start: 0
-    max-end: 0
-  
-  # Разрешаем yes/no для Ansible
   truthy:
-    allowed-values: ['yes', 'no', 'true', 'false']
-
-# ИГНОРИРУЕМ зависимостями и кэши
-ignore: |
-  .tox/
-  .git/
-  __pycache__/
-  *.pyc
-  molecule/.cache/
-  roles/vector/files/
-  roles/vector/templates/
-  .molecule/
-  .cache/
+    allowed-values: [yes, no, true, false]

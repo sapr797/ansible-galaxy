@@ -5,7 +5,6 @@
     system: yes
     shell: /sbin/nologin
     create_home: no
-  when: ansible_os_family == "RedHat"
 
 - name: Create Vector directories
   file:
@@ -18,17 +17,22 @@
     - /etc/vector
     - /var/lib/vector
     - /var/log/vector
-  when: ansible_os_family == "RedHat"
 
-- name: Create static configuration
+- name: Create Vector configuration
   copy:
     content: |
-      # Vector static configuration
+      # Vector configuration
       [sources]
-      [transforms]
+        [sources.generator]
+        type = "demo_logs"
+        format = "json"
+      
       [sinks]
+        [sinks.console]
+        type = "console"
+        inputs = ["generator"]
+        encoding.codec = "json"
     dest: /etc/vector/vector.toml
     owner: vector
     group: vector
     mode: '0644'
-  when: ansible_os_family == "RedHat"

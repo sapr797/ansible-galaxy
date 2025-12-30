@@ -1,36 +1,7 @@
-# Python
-__pycache__/
-*.py[cod]
-*.so
-.Python
-.env
-.venv/
-venv/
-
-# Tox и зависимости
 .tox/
-.coverage
-.pytest_cache/
-.mypy_cache/
-
-# Ansible
-retry-files/
-*.retry
-
-# Molecule кэш
+__pycache__/
+*.pyc
 .molecule/
 .cache/
-molecule/.cache/
-
-# Системные и IDE
-.DS_Store
-Thumbs.db
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# Локальные конфиги
-*.local
-*.env
+venv/
+.venv/

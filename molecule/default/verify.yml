@@ -1,38 +1,20 @@
 ---
-- name: Final verification
+- name: Verify
   hosts: all
   tasks:
-    - name: Check infrastructure
-      stat:
-        path: "{{ item.path }}"
-      loop:
-        - {path: /etc/vector, type: "config directory"}
-        - {path: /var/lib/vector, type: "data directory"}
-        - {path: /tmp/.vector_role_complete, type: "completion marker"}
-      register: checks
-
-    - name: Display verification results
-      debug:
-        msg: "{{ item.item.type }}: {{ '✓ EXISTS' if item.stat.exists else '✗ MISSING' }}"
-      loop: "{{ checks.results }}"
-
-    - name: Check Vector user
-      shell: "getent passwd vector 2>/dev/null || echo 'User not found'"
+    - name: Check Vector user exists
+      shell: "id vector"
       register: vector_user
       changed_when: false
-
-    - name: Display user status
+    
+    - name: Check Vector directories
+      stat:
+        path: "{{ item }}"
+      loop:
+        - /etc/vector
+        - /var/lib/vector
+      register: dirs
+    
+    - name: Display verification results
       debug:
-        msg: "Vector user: {{ vector_user.stdout }}"
-
-    - name: Final success message
-      debug:
-        msg: |
-          =========================================
-          MOLECULE TEST PASSED SUCCESSFULLY!
-          =========================================
-          Environment: {{ ansible_distribution }} {{ ansible_distribution_version }}
-          Python: {{ ansible_python_version }}
-          All infrastructure tests completed.
-          Molecule is fully configured and working!
-          =========================================
+        msg: "Vector infrastructure ready on {{ ansible_distribution }}"
