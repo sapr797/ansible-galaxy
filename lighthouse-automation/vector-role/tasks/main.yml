@@ -1,0 +1,4 @@
+---
+- name: "Test task from vector role"
+  debug:
+    msg: "Vector role is executing"

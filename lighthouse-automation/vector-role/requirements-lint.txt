@@ -1,0 +1,15 @@
+# Линтеры
+ansible-lint>=6.0.0
+yamllint>=1.30.0
+
+# Ansible
+ansible-core>=2.15.0
+
+# Molecule
+molecule>=3.6.0
+molecule-docker>=1.1.0
+
+# Дополнительные зависимости
+docker>=6.0.0
+pyyaml>=6.0
+rich>=13.0.0

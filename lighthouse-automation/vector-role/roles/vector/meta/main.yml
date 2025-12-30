@@ -1,0 +1,16 @@
+---
+galaxy_info:
+  author: Your Name
+  description: Vector role
+  license: MIT
+  min_ansible_version: 2.9
+  platforms:
+    - name: EL
+      versions:
+        - 7
+        - 8
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+dependencies: []

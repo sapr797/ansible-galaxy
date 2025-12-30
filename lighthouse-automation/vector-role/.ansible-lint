@@ -1,0 +1,28 @@
+---
+# Профиль: basic, moderate, standard, production, safety, shared, min
+profile: moderate
+
+# Отключаемые правила
+skip_list:
+  - experimental  # Экспериментальные правила
+  - name[missing]  # Задачи без name
+  - fqcn[action]  # Короткие имена модулей
+  - yaml  # Проверяется yamllint отдельно
+  - no-changed-when  # Для команд/shell
+  - fqcn[action-core]  # Для molecule тестов
+
+# Включаемые правила (опционально)
+enable_list: []
+
+# Игнорируемые пути
+exclude_paths:
+  - .tox/
+  - .git/
+  - molecule/.cache/
+  - roles/vector/files/
+  - roles/vector/templates/
+
+# Формат вывода
+quiet: false
+parseable: false
+verbosity: 0

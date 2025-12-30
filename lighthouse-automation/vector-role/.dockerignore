@@ -1,0 +1,31 @@
+# Игнорировать всё
+*
+
+# Но разрешить только Dockerfile
+!molecule/default/Dockerfile.j2
+
+# Или более избирательно:
+# venv*/
+# .tox/
+# .git/
+# __pycache__/
+# *.pyc
+# *.pyo
+# *.pyd
+# .Python
+# *.so
+# .coverage
+# .cache
+# nosetests.xml
+# coverage.xml
+# *.cover
+# .hypothesis/
+# .pytest_cache/
+# .mypy_cache/
+# .idea/
+# .vscode/
+# *.swp
+# *.swo
+# *~
+# .DS_Store
+# Thumbs.db
