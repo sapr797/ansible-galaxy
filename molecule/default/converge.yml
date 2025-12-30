@@ -1,16 +1,5 @@
 ---
 - name: Converge
   hosts: all
-  gather_facts: false
-  
-  tasks:
-    # Правильная команда apt-get
-    - name: Install Python 3
-      raw: |
-        apt-get update && apt-get install -y python3
-      changed_when: false
-      ignore_errors: yes
-    
-    # Включаем задачи роли
-    - name: Execute Vector role
-      include_tasks: ../../tasks/main.yml
+  roles:
+    - ../../roles/vector

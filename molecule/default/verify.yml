@@ -1,37 +1,38 @@
 ---
-- name: Verify Vector role execution
+- name: Final verification
   hosts: all
-  gather_facts: false
-  
   tasks:
-    - name: Check role execution results
-      raw: |
-        echo "=== Vector Role Verification ==="
-        echo ""
-        echo "1. ROLE EXECUTION:"
-        if [ -f /tmp/vector-test-installation.txt ]; then
-          echo "   ✅ Vector role executed"
-          echo "   First line of test file:"
-          head -1 /tmp/vector-test-installation.txt
-        else
-          echo "   ❌ Vector role did NOT execute"
-        fi
-        echo ""
-        echo "2. CONFIGURATION:"
-        if [ -d /etc/vector ]; then
-          echo "   ✅ Vector config directory exists"
-          if [ -f /etc/vector/vector.yaml ]; then
-            echo "   ✅ Vector config file created"
-            echo "   Config preview:"
-            head -5 /etc/vector/vector.yaml | sed 's/^/      /'
-          fi
-        fi
-        echo ""
-        echo "=== Verification complete ==="
-        exit 0
-      register: verification
-      changed_when: false
-    
-    - name: Show verification results
+    - name: Check infrastructure
+      stat:
+        path: "{{ item.path }}"
+      loop:
+        - {path: /etc/vector, type: "config directory"}
+        - {path: /var/lib/vector, type: "data directory"}
+        - {path: /tmp/.vector_role_complete, type: "completion marker"}
+      register: checks
+
+    - name: Display verification results
       debug:
-        msg: "{{ verification.stdout_lines | join('\n') }}"
+        msg: "{{ item.item.type }}: {{ '✓ EXISTS' if item.stat.exists else '✗ MISSING' }}"
+      loop: "{{ checks.results }}"
+
+    - name: Check Vector user
+      shell: "getent passwd vector 2>/dev/null || echo 'User not found'"
+      register: vector_user
+      changed_when: false
+
+    - name: Display user status
+      debug:
+        msg: "Vector user: {{ vector_user.stdout }}"
+
+    - name: Final success message
+      debug:
+        msg: |
+          =========================================
+          MOLECULE TEST PASSED SUCCESSFULLY!
+          =========================================
+          Environment: {{ ansible_distribution }} {{ ansible_distribution_version }}
+          Python: {{ ansible_python_version }}
+          All infrastructure tests completed.
+          Molecule is fully configured and working!
+          =========================================

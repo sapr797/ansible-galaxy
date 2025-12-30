@@ -1,0 +1,34 @@
+---
+- name: Create Vector user
+  user:
+    name: vector
+    system: yes
+    shell: /sbin/nologin
+    create_home: no
+  when: ansible_os_family == "RedHat"
+
+- name: Create Vector directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: vector
+    group: vector
+    mode: '0755'
+  loop:
+    - /etc/vector
+    - /var/lib/vector
+    - /var/log/vector
+  when: ansible_os_family == "RedHat"
+
+- name: Create static configuration
+  copy:
+    content: |
+      # Vector static configuration
+      [sources]
+      [transforms]
+      [sinks]
+    dest: /etc/vector/vector.toml
+    owner: vector
+    group: vector
+    mode: '0644'
+  when: ansible_os_family == "RedHat"
