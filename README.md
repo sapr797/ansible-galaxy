@@ -24,6 +24,24 @@
 ✅ **Verify проверяет результаты без ошибок**  
 ✅ **Весь цикл `molecule test` работает**
 
+🏗️ Структура проекта
+text
+vector-role/
+├── roles/vector/              # Основная роль
+│   ├── tasks/main.yml        # Задачи установки
+│   ├── handlers/main.yml     # Обработчики сервиса
+│   └── defaults/main.yml     # Переменные по умолчанию
+├── molecule/                 # Тесты Molecule
+│   └── default/
+│       ├── molecule.yml      # Конфигурация тестов
+│       ├── converge.yml      # Применение роли
+│       └── verify.yml        # Проверка результатов
+├── .github/workflows/        # CI/CD пайплайны
+├── .ansible-lint             # Конфигурация линтера
+├── .yamllint                 # Конфигурация YAML линтера
+├── tox.ini                   # Конфигурация тестового окружения
+└── scripts/                  # Вспомогательные скрипты
+
 ## Финальная рабочая конфигурация
 
 ### `tasks/main.yml` - тестовая роль Vector:
@@ -42,10 +60,10 @@ yaml
 - debug: показывает результаты
 Требования
 Поддерживаемые платформы
+Rocky Linux 9 (основная тестовая платформа)
+RHEL/CentOS 8+
 Ubuntu 20.04 (Focal)
-
 Ubuntu 22.04 (Jammy)
-
 Oracle Linux 8
 
 Другие совместимые дистрибутивы RHEL/CentOS 8
@@ -56,13 +74,29 @@ Ansible >= 2.9
 Python >= 3.6
 
 Зависимости
+Ansible Core: >= 2.17.0
+Python: >= 3.9
+Docker: Для тестирования Molecule
+Tox: Для запуска тестового пайплайна
 Коллекция community.general
-
 Коллекция ansible.posix
 
 Установка
 Из GitHub
-bash
+Использование роли в проекте
+yaml
+# requirements.yml
+---
+roles:
+  - name: vector
+    src: https://github.com/sapr797/ansible-galaxy.git
+    scm: git
+    version: main
+
+Установка зависимостей
+
+pip install ansible-core molecule molecule-docker docker
+
 # Клонировать репозиторий
 git clone https://github.com/sapr797/ansible-galaxy.git
 cd ansible-galaxy
@@ -80,11 +114,134 @@ vector_version: "0.35.0"
 vector_config_dir: /etc/vector
 vector_data_dir: /var/lib/vector
 vector_log_dir: /var/log/vector
+🔧 Конфигурация
+
+Основные переменные (defaults/main.yml)
+
+yaml
+# Версия Vector
+vector_version: "latest"
+
+# Директории
+vector_config_dir: /etc/vector
+vector_data_dir: /var/lib/vector
+vector_log_dir: /var/log/vector
+
+# Пользователь и группа
+vector_user: vector
+vector_group: vector
+
+# Сервис
+vector_service_name: vector
+vector_service_state: started
+vector_service_enabled: true
+
+Пример playbook с кастомными настройками
+yaml
+---
+- name: Настройка Vector с мониторингом
+  hosts: observability_servers
+  become: yes
+  
+  vars:
+    vector_config_dir: /opt/vector/config
+    vector_service_enabled: true
+    
+  roles:
+    - vector
+
+🧪 Тестирование
+Полный тестовый пайплайн
+
+# Запуск всех тестов через tox
+tox
+
+# или конкретная среда
+tox -e py39-molecule
+tox -e lint
 
 # Конфигурация службы
 vector_user: vector
 vector_group: vector
 vector_service_name: vector
+
+Ручное тестирование с Molecule
+
+# Создание тестового окружения
+molecule create
+
+# Применение роли
+molecule converge
+
+# Проверка идемпотентности
+molecule idempotence
+
+# Запуск верификации
+molecule verify
+
+# Очистка
+molecule destroy
+
+# Полный цикл тестирования
+molecule test
+
+Проверка качества кода
+
+# Запуск всех проверок
+./scripts/run-checks.sh
+
+# Отдельные проверки
+ansible-lint .
+yamllint .
+molecule lint
+
+🔄 CI/CD
+Проект включает готовый пайплайн GitHub Actions (.github/workflows/test.yml), который:
+Запускает тесты Molecule на push/pull request
+Проверяет код с помощью ansible-lint и yamllint
+Тестирует на нескольких версиях Python
+
+🛠️ Разработка
+
+Настройка локального окружения
+# Создание виртуального окружения
+python3 -m venv venv
+source venv/bin/activate
+
+# Установка зависимостей разработки
+pip install -r requirements.txt
+pip install tox pre-commit
+
+# Установка pre-commit хуков
+pre-commit install
+Добавление нового сценария тестирования
+molecule init scenario -s ubuntu -d docker
+molecule init scenario -s centos8 -d docker
+Конфигурация tox
+Проект использует tox.ini для управления тестовыми окружениями:
+
+ini
+[tox]
+envlist = py39-molecule, lint
+
+[testenv]
+deps = 
+    ansible-core>=2.17
+    molecule
+    molecule-docker
+    ansible-lint
+    yamllint
+commands = 
+    molecule test -s default
+
+[testenv:lint]
+deps = 
+    ansible-lint
+    yamllint
+commands = 
+    ansible-lint .
+    yamllint .
+
 Использование
 Базовый плейбук
 yaml
@@ -135,7 +292,7 @@ yaml
     mode: '0644'
 Разработка
 Локальная настройка
-bash
+
 # Создать виртуальное окружение
 python3 -m venv venv
 source venv/bin/activate
@@ -145,11 +302,53 @@ pip install -r requirements.txt  # или вручную:
 pip install molecule molecule-podman ansible ansible-lint yamllint
 Тестирование с Molecule
 Быстрый старт:
-bash
+
 # Запустить полный набор тестов
 molecule test
+
+Настройка локального окружения
+
+# Создание виртуального окружения
+python3 -m venv venv
+source venv/bin/activate
+
+# Установка зависимостей разработки
+pip install -r requirements.txt
+pip install tox pre-commit
+
+# Установка pre-commit хуков
+pre-commit install
+Добавление нового сценария тестирования
+
+molecule init scenario -s ubuntu -d docker
+molecule init scenario -s centos8 -d docker
+Конфигурация tox
+Проект использует tox.ini для управления тестовыми окружениями:
+
+ini
+[tox]
+envlist = py39-molecule, lint
+
+[testenv]
+deps = 
+    ansible-core>=2.17
+    molecule
+    molecule-docker
+    ansible-lint
+    yamllint
+commands = 
+    molecule test -s default
+
+[testenv:lint]
+deps = 
+    ansible-lint
+    yamllint
+commands = 
+    ansible-lint .
+    yamllint .
+
 Подробные команды:
-bash
+
 molecule create    # Создать тестовые инстансы
 molecule converge  # Применить роль
 molecule verify    # Запустить верификацию
@@ -159,13 +358,9 @@ molecule lint      # Проверить качество кода
 Сценарии тестирования
 default: Ubuntu 22.04 с установкой Vector
 
-(Добавить больше сценариев при необходимости)
-
 Зависимости
 Python 3.6+
-
 Docker (для тестирования с Molecule)
-
 Molecule и соответствующие драйверы
 
 Пример сценария
