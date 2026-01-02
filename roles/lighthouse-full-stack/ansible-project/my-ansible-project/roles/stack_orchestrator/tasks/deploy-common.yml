@@ -1,0 +1,28 @@
+---
+- name: "📦 Phase 1: Common infrastructure"
+  block:
+    - name: Update all systems
+      apt:
+        update_cache: yes
+        upgrade: dist
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
+      delegate_to: "{{ item }}"
+      loop: "{{ groups['all'] }}"
+      tags: common,update
+
+    - name: Install common dependencies
+      include_role:
+        name: common
+        apply:
+          delegate_to: "{{ item }}"
+      loop: "{{ groups['all'] }}"
+      tags: common,dependencies
+
+    - name: Create deployment user
+      user:
+        name: "{{ deploy_user | default('deploy') }}"
+        groups: sudo
+        shell: /bin/bash
+        createhome: yes
+      tags: common,users

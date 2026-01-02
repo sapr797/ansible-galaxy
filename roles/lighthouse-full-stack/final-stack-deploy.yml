@@ -1,0 +1,58 @@
+---
+- name: "🏗️ Deploy Complete Lighthouse Stack"
+  hosts: localhost
+  gather_facts: yes
+  connection: local
+  
+  vars:
+    stack_components:
+      - database
+      - web_server
+      - application
+      - monitoring
+    
+  pre_tasks:
+    - name: "🔍 Pre-flight check"
+      debug:
+        msg: "Starting deployment of {{ stack_components | length }} components"
+    
+    - name: "📦 Update system packages"
+      apt:
+        update_cache: yes
+        upgrade: safe
+      when: ansible_os_family == "Debian"
+  
+  tasks:
+    - name: "🗄️ Deploy database (simulated)"
+      debug:
+        msg: "Database component deployed"
+      tags: database
+    
+    - name: "🌐 Deploy web server (simulated)"
+      debug:
+        msg: "Web server component deployed"
+      tags: web
+    
+    - name: "🚀 Deploy application (simulated)"
+      debug:
+        msg: "Application component deployed"
+      tags: app
+    
+    - name: "📊 Deploy monitoring (simulated)"
+      debug:
+        msg: "Monitoring component deployed"
+      tags: monitoring
+  
+  post_tasks:
+    - name: "✅ Verify deployment"
+      debug:
+        msg: |
+          🎉 STACK DEPLOYMENT COMPLETE!
+          Time: {{ ansible_date_time.iso8601 }}
+          Host: {{ ansible_hostname }}
+          OS: {{ ansible_distribution }} {{ ansible_distribution_version }}
+          
+          Components deployed successfully:
+          {% for component in stack_components %}
+          - {{ component }}
+          {% endfor %}

@@ -1,0 +1,30 @@
+---
+- name: "🏥 Health checks"
+  block:
+    - name: Check service status
+      systemd:
+        name: "{{ item.service }}"
+        state: started
+      loop:
+        - { service: "postgresql" }
+        - { service: "redis" }
+        - { service: "nginx" }
+        - { service: "{{ app_service_name }}" }
+      when: item.service in ansible_facts.services
+      tags: health,services
+
+    - name: Verify port accessibility
+      wait_for:
+        host: "{{ item.host }}"
+        port: "{{ item.port }}"
+        timeout: 30
+      loop: "{{ health_check_endpoints }}"
+      tags: health,ports
+
+    - name: Test application endpoints
+      uri:
+        url: "http://{{ item }}/health"
+        status_code: 200
+        timeout: 10
+      loop: "{{ groups[stack_config.components.webserver.hosts] }}"
+      tags: health,app

@@ -1,0 +1,21 @@
+---
+- name: "🗄️ Phase 2: Database layer"
+  block:
+    - name: Deploy PostgreSQL
+      include_role:
+        name: "{{ stack_config.components.database.role }}"
+        apply:
+          delegate_to: "{{ item }}"
+      loop: "{{ groups[stack_config.components.database.hosts] }}"
+      tags: database,postgres
+
+    - name: Initialize databases
+      include_tasks: tasks/database-setup.yml
+      tags: database,init
+
+    - name: Verify database connectivity
+      postgresql_ping:
+        login_host: "{{ item }}"
+        login_user: postgres
+      loop: "{{ groups[stack_config.components.database.hosts] }}"
+      tags: database,verify

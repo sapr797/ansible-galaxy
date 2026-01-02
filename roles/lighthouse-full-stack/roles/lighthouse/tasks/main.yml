@@ -1,0 +1,27 @@
+---
+- name: Display Lighthouse installation message
+  debug:
+    msg: "Lighthouse role executing on {{ ansible_distribution }}"
+  changed_when: false
+
+- name: Create reports directory in user space
+  file:
+    path: "{{ ansible_user_dir }}/lighthouse-reports"
+    state: directory
+    mode: '0755'
+
+- name: Create sample report
+  copy:
+    content: |
+      # Lighthouse Test Report
+      System: {{ ansible_distribution }}
+      User: {{ ansible_user_id }}
+      
+      This is a test report without sudo privileges.
+    dest: "{{ ansible_user_dir }}/lighthouse-reports/test.md"
+    mode: '0644'
+
+- name: Show completion message
+  debug:
+    msg: "Lighthouse test completed without sudo"
+  changed_when: false

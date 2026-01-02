@@ -1,0 +1,12 @@
+---
+- name: "Install Nginx (simulated)"
+  debug:
+    msg: "Installing Nginx on {{ inventory_hostname }}"
+
+- name: "Configure Nginx"
+  debug:
+    msg: "Configuring Nginx on {{ inventory_hostname }}"
+
+- name: "Start Nginx service"
+  debug:
+    msg: "Starting Nginx service on {{ inventory_hostname }}"

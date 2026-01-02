@@ -1,0 +1,40 @@
+---
+- name: "🚀 Test Full Stack Deployment"
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  
+  vars:
+    stack_name: "Lighthouse Stack"
+    environment: "test"
+    
+  tasks:
+    - name: "📋 Show deployment info"
+      debug:
+        msg: "Starting deployment of '{{ stack_name }}' in {{ environment }} environment"
+    
+    - name: "🔄 Simulate database deployment"
+      debug:
+        msg: "Deploying database layer..."
+      register: db_result
+    
+    - name: "🌐 Simulate web server deployment"
+      debug:
+        msg: "Deploying web server layer..."
+      when: db_result is succeeded
+    
+    - name: "🚀 Simulate application deployment"
+      debug:
+        msg: "Deploying application layer..."
+    
+    - name: "✅ Deployment complete"
+      debug:
+        msg: |
+          🎉 Stack '{{ stack_name }}' deployed successfully!
+          
+          Components:
+          - Database: ✓
+          - Web Server: ✓
+          - Application: ✓
+          
+          Timestamp: {{ ansible_date_time.iso8601 }}

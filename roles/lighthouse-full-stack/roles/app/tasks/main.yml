@@ -1,0 +1,12 @@
+---
+- name: "Install Application (simulated)"
+  debug:
+    msg: "Installing Application on {{ inventory_hostname }}"
+
+- name: "Configure Application"
+  debug:
+    msg: "Configuring Application on {{ inventory_hostname }}"
+
+- name: "Start Application service"
+  debug:
+    msg: "Starting Application service on {{ inventory_hostname }}"

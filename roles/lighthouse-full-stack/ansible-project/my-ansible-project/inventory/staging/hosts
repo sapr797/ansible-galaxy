@@ -1,0 +1,19 @@
+# Staging Environment Inventory
+
+[web_servers]
+web-staging-01 ansible_host=10.0.2.10
+
+[app_servers]
+app-staging-01 ansible_host=10.0.2.20
+
+[db_servers]
+db-staging-01 ansible_host=10.0.2.30
+
+[all:children]
+web_servers
+app_servers
+db_servers
+
+[all:vars]
+ansible_user=ansible
+env=staging

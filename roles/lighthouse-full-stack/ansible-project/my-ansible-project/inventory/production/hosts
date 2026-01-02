@@ -1,0 +1,31 @@
+# Production Environment Inventory
+
+[web_servers]
+web-prod-01 ansible_host=10.0.1.10
+web-prod-02 ansible_host=10.0.1.11
+
+[app_servers]
+app-prod-01 ansible_host=10.0.1.20
+app-prod-02 ansible_host=10.0.1.21
+
+[db_servers]
+db-prod-01 ansible_host=10.0.1.30
+
+[cache_servers]
+cache-prod-01 ansible_host=10.0.1.40
+
+[all:children]
+web_servers
+app_servers
+db_servers
+cache_servers
+
+[all:vars]
+ansible_user=ansible
+ansible_ssh_private_key_file=~/.ssh/id_rsa
+ansible_connection=ssh
+ansible_port=22
+ansible_python_interpreter=/usr/bin/python3
+
+# Environment specific variables
+env=production

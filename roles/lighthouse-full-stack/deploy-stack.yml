@@ -1,0 +1,72 @@
+---
+- name: Deploy full application stack
+  hosts: all
+  become: yes
+  vars:
+    # Общие переменные
+    app_name: myapp
+    deploy_user: deploy
+    
+  pre_tasks:
+    - name: Ensure system is updated
+      apt:
+        update_cache: yes
+        upgrade: dist
+      when: ansible_os_family == "Debian"
+
+- name: Setup database layer
+  hosts: db_servers
+  roles:
+    - role: postgres
+      vars:
+        postgres_version: 14
+        postgres_databases:
+          - name: "{{ app_name }}_db"
+        postgres_users:
+          - name: "{{ app_name }}_user"
+            password: "{{ vault_db_password }}"
+            databases: ["{{ app_name }}_db"]
+
+- name: Setup caching layer
+  hosts: cache_servers
+  roles:
+    - role: redis
+      vars:
+        redis_version: 7
+        redis_bind: 0.0.0.0
+        redis_protected_mode: no
+
+- name: Setup application layer
+  hosts: app_servers
+  roles:
+    - role: app_dependencies
+      vars:
+        python_version: 3.11
+        node_version: 18
+    
+    - role: django_app  # или ваша фреймворк-специфичная роль
+      vars:
+        django_app_name: "{{ app_name }}"
+        django_settings_module: "{{ app_name }}.settings.production"
+        django_secret_key: "{{ vault_django_secret }}"
+
+- name: Setup web server layer
+  hosts: web_servers
+  roles:
+    - role: nginx
+      vars:
+        nginx_sites:
+          - name: "{{ app_name }}"
+            server_name: "{{ domain_name }}"
+            upstream: "{{ app_servers }}"
+            ssl_enabled: true
+            ssl_cert: "{{ ssl_cert_path }}"
+            ssl_key: "{{ ssl_key_path }}"
+
+- name: Setup monitoring
+  hosts: all
+  roles:
+    - role: monitoring
+      vars:
+        prometheus_enabled: true
+        grafana_enabled: true

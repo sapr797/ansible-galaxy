@@ -1,0 +1,17 @@
+---
+# Global variables for all hosts
+timezone: UTC
+ntp_servers:
+  - 0.pool.ntp.org
+  - 1.pool.ntp.org
+
+# SSH hardening
+sshd_permit_root_login: no
+sshd_password_authentication: no
+
+# System users
+system_users:
+  - name: ansible
+    groups: sudo
+    ssh_keys:
+      - "ssh-rsa AAAAB3NzaC1yc2E..."

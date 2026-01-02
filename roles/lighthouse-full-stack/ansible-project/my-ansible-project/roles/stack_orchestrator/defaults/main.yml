@@ -1,0 +1,47 @@
+---
+# Конфигурация стека
+stack_config:
+  # Порядок развертывания
+  deployment_order:
+    - common
+    - database
+    - cache
+    - application
+    - webserver
+    - monitoring
+  
+  # Какие компоненты развертывать
+  components:
+    database:
+      enabled: true
+      role: postgresql
+      hosts: "{{ groups['db_servers'] }}"
+    
+    cache:
+      enabled: true
+      role: redis
+      hosts: "{{ groups['cache_servers'] }}"
+    
+    application:
+      enabled: true
+      role: django_app
+      hosts: "{{ groups['app_servers'] }}"
+    
+    webserver:
+      enabled: true
+      role: nginx
+      hosts: "{{ groups['web_servers'] }}"
+    
+    monitoring:
+      enabled: false
+      role: monitoring
+      hosts: "{{ groups['all'] }}"
+
+# Переменные окружения
+environment: "{{ deploy_env | default('production') }}"
+
+# Контрольные точки
+stack_checkpoints:
+  health_check_enabled: true
+  validate_services: true
+  rollback_on_failure: true

@@ -1,0 +1,12 @@
+---
+- name: Install Python dependencies
+  debug:
+    msg: "Installing Python on {{ inventory_hostname }}"
+
+- name: Deploy application code
+  debug:
+    msg: "Deploying {{ app_name }} to {{ inventory_hostname }}"
+
+- name: Start application service
+  debug:
+    msg: "Starting {{ app_name }} service on {{ inventory_hostname }}"

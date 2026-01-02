@@ -1,0 +1,7 @@
+---
+stack_name: "my-app-stack"
+environment: "development"
+deploy_database: true
+deploy_web: true
+deploy_app: true
+app_name: "myapp"

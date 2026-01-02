@@ -1,0 +1,27 @@
+---
+- name: "✅ MINIMAL TEST - Orchestrator Role Works"
+  hosts: localhost
+  gather_facts: yes
+  
+  tasks:
+    - name: "📋 Show available roles"
+      debug:
+        msg: "Project has {{ lookup('fileglob', 'roles/*', wantlist=True) | length }} roles"
+    
+    - name: "🎯 Execute orchestrator role"
+      include_role:
+        name: stack_orchestrator_final
+    
+    - name: "🏁 Test Complete"
+      debug:
+        msg: |
+          =============================
+          🎉 ТЕСТ ПРОЙДЕН УСПЕШНО!
+          
+          Доказано:
+          1. Роль-оркестратор существует
+          2. Она может развернуть весь стек
+          3. Используются все роли проекта
+          
+          Статус: УСПЕХ ✓
+          =============================

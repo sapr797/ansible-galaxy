@@ -1,0 +1,12 @@
+---
+- name: Install PostgreSQL (simulated)
+  debug:
+    msg: "Installing PostgreSQL on {{ inventory_hostname }}"
+
+- name: Create database
+  debug:
+    msg: "Creating database 'app_db' on {{ inventory_hostname }}"
+
+- name: Start database service
+  debug:
+    msg: "Starting PostgreSQL service on {{ inventory_hostname }}"

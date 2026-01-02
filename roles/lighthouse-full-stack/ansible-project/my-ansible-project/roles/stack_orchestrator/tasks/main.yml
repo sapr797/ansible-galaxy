@@ -1,0 +1,42 @@
+---
+- name: Validate deployment configuration
+  block:
+    - name: Check if inventory groups exist
+      assert:
+        that:
+          - "item in groups"
+        fail_msg: "Group {{ item }} not found in inventory!"
+      loop:
+        - "{{ stack_config.components.database.hosts | default('db_servers') }}"
+        - "{{ stack_config.components.cache.hosts | default('cache_servers') }}"
+        - "{{ stack_config.components.application.hosts | default('app_servers') }}"
+        - "{{ stack_config.components.webserver.hosts | default('web_servers') }}"
+      when: stack_checkpoints.validate_services | default(true)
+
+    - name: Validate required variables
+      assert:
+        that:
+          - deploy_env is defined
+          - stack_name is defined
+        fail_msg: "Required variables (deploy_env, stack_name) are not defined!"
+      tags: validation
+
+- name: Display deployment plan
+  debug:
+    msg: |
+      🚀 Starting deployment of stack: {{ stack_name }}
+      Environment: {{ environment }}
+      Components to deploy:
+      {% for component, config in stack_config.components.items() %}
+        - {{ component }}: {{ config.enabled | ternary('ENABLED', 'DISABLED') }}
+      {% endfor %}
+      Order: {{ stack_config.deployment_order | join(' → ') }}
+  tags: info
+
+- name: Include deployment phases
+  include_tasks: "deploy-{{ item }}.yml"
+  loop: "{{ stack_config.deployment_order }}"
+  loop_control:
+    loop_var: phase
+  when: stack_config.components[phase].enabled | default(false)
+  tags: deployment

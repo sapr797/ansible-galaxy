@@ -1,0 +1,22 @@
+---
+- name: Deploy complete application stack
+  hosts: all
+  gather_facts: yes
+  become: yes
+  vars_files:
+    - ../vars/common.yml
+    - ../vars/{{ env }}.yml
+
+  tasks:
+    - name: Include OS-specific variables
+      include_vars: "{{ item }}"
+      with_first_found:
+        - "os/{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+        - "os/{{ ansible_distribution }}.yml"
+        - "os/default.yml"
+      loop_control:
+        loop_var: os_vars_file
+
+    - name: Debug environment info
+      debug:
+        msg: "Deploying to {{ env }} environment"

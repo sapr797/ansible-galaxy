@@ -1,0 +1,21 @@
+---
+# Роли для стека
+- src: https://github.com/geerlingguy/ansible-role-postgresql.git
+  version: 2.0.0
+  name: postgresql
+
+- src: https://github.com/geerlingguy/ansible-role-redis.git
+  version: 2.0.0
+  name: redis
+
+- src: https://github.com/nginxinc/ansible-role-nginx.git
+  version: 0.24.1
+  name: nginx
+
+- src: https://github.com/vitalk/ansible-django.git
+  version: master
+  name: django_app
+
+# Роль-оркестратор (локальная)
+- src: roles/stack_orchestrator
+  name: stack_orchestrator

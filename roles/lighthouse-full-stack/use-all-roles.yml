@@ -1,0 +1,21 @@
+---
+- name: "🎯 Use All Available Roles"
+  hosts: localhost
+  connection: local
+  
+  tasks:
+    - name: "📋 List available roles"
+      debug:
+        msg: "Found role: {{ item }}"
+      loop: "{{ lookup('fileglob', 'roles/*/tasks/main.yml', wantlist=True) | map('dirname') | map('basename') | list }}"
+      register: available_roles
+    
+    - name: "🚀 Execute each role"
+      include_role:
+        name: "{{ item.item }}"
+      loop: "{{ available_roles.results }}"
+      when: item.item is defined
+      
+    - name: "✅ All roles executed"
+      debug:
+        msg: "Successfully executed {{ available_roles.results | length }} roles"

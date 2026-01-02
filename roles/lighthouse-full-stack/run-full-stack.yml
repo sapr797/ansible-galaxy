@@ -1,0 +1,42 @@
+---
+- name: "🏗️ Deploy Full Infrastructure Stack"
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+  
+  vars:
+    app_name: "lighthouse"
+    deploy_env: "development"
+    
+  pre_tasks:
+    - name: "🔍 Pre-flight checks"
+      debug:
+        msg: "Starting deployment in {{ deploy_env }} environment"
+    
+    - name: "🔄 Ensure directory structure"
+      file:
+        path: "/tmp/ansible-{{ app_name }}-{{ deploy_env }}"
+        state: directory
+        mode: '0755'
+    
+  roles:
+    - name: "Include available roles"
+      include_role:
+        name: "{{ item }}"
+      loop: "{{ roles_to_deploy | default(['common', 'web', 'app']) }}"
+      when: >
+        item in role_names and 
+        lookup('file', 'roles/' ~ item ~ '/tasks/main.yml') is not none
+        
+  post_tasks:
+    - name: "✅ Verification"
+      debug:
+        msg: |
+          ================================
+          Deployment Summary
+          ================================
+          Application: {{ app_name }}
+          Environment: {{ deploy_env }}
+          Timestamp: {{ ansible_date_time.iso8601 }}
+          Status: COMPLETED
+          ================================

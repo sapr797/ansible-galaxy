@@ -1,0 +1,21 @@
+---
+- name: "🚀 Phase 4: Application layer"
+  block:
+    - name: Deploy application
+      include_role:
+        name: "{{ stack_config.components.application.role }}"
+        apply:
+          delegate_to: "{{ item }}"
+      loop: "{{ groups[stack_config.components.application.hosts] }}"
+      tags: app,deploy
+
+    - name: Migrate database
+      command: "{{ django_manage_path }} migrate"
+      delegate_to: "{{ groups[stack_config.components.application.hosts][0] }}"
+      tags: app,migrate
+
+    - name: Collect static files
+      command: "{{ django_manage_path }} collectstatic --noinput"
+      delegate_to: "{{ item }}"
+      loop: "{{ groups[stack_config.components.application.hosts] }}"
+      tags: app,static

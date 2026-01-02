@@ -1,0 +1,15 @@
+---
+dependencies:
+  # Автоматически устанавливаем все зависимости
+  - role: postgresql
+    when: deploy_database | default(false)
+  - role: redis
+    when: deploy_cache | default(false)
+  - role: nginx
+    when: deploy_webserver | default(false)
+  - role: django_app
+    when: deploy_application | default(false)
+  - role: monitoring
+    when: deploy_monitoring | default(false)
+  - role: common
+    when: deploy_common | default(true)

@@ -1,0 +1,50 @@
+---
+- name: 🚀 Deploy complete application stack
+  hosts: all
+  gather_facts: yes
+  become: yes
+  vars:
+    stack_name: "my-awesome-app"
+    deploy_env: "production"
+    
+    # Активируем все компоненты
+    deploy_database: true
+    deploy_cache: true
+    deploy_webserver: true
+    deploy_application: true
+    deploy_monitoring: true
+    deploy_common: true
+
+  pre_tasks:
+    - name: "🔍 Pre-flight checks"
+      include_role:
+        name: stack_orchestrator
+        tasks_from: preflight.yml
+      tags: always
+
+  roles:
+    - role: stack_orchestrator
+      tags: stack,deploy
+
+  post_tasks:
+    - name: "✅ Post-deployment validation"
+      include_role:
+        name: stack_orchestrator
+        tasks_from: health-check.yml
+      tags: health,validate
+
+    - name: "📊 Deployment summary"
+      debug:
+        msg: |
+          =========================================
+          🎉 DEPLOYMENT COMPLETE!
+          Stack: {{ stack_name }}
+          Environment: {{ deploy_env }}
+          Timestamp: {{ ansible_date_time.iso8601 }}
+          
+          Access URLs:
+          - Application: https://{{ domain_name }}
+          - Monitoring: https://monitor.{{ domain_name }}
+          - API: https://api.{{ domain_name }}
+          =========================================
+      tags: summary

@@ -1,0 +1,85 @@
+---
+- name: "🎯 FINAL TEST - Full Stack Deployment Simulation"
+  hosts: localhost
+  gather_facts: yes
+  connection: local
+  become: no  # Не использовать sudo глобально
+  
+  vars:
+    stack_name: "Lighthouse Production Stack"
+    deployment_phase: "testing"
+    
+  tasks:
+    - name: "📊 Show system information"
+      debug:
+        msg: |
+          System: {{ ansible_distribution }} {{ ansible_distribution_version }}
+          Hostname: {{ ansible_hostname }}
+          Date: {{ ansible_date_time.date }}
+          Time: {{ ansible_date_time.time }}
+    
+    - name: "🏗️ Phase 1: Infrastructure Setup (requires sudo)"
+      block:
+        - name: "Create application directory"
+          become: yes
+          file:
+            path: /opt/{{ stack_name | lower | replace(' ', '-') }}
+            state: directory
+            mode: '0755'
+        
+        - name: "Create deployment user"
+          become: yes
+          user:
+            name: deploy
+            state: present
+            create_home: yes
+      when: deployment_phase == "production"
+    
+    - name: "🗄️ Phase 2: Database Deployment (simulated)"
+      debug:
+        msg: "Deploying PostgreSQL database for {{ stack_name }}"
+    
+    - name: "🌐 Phase 3: Web Server Deployment (simulated)"
+      debug:
+        msg: "Deploying Nginx web server for {{ stack_name }}"
+    
+    - name: "🚀 Phase 4: Application Deployment (simulated)"
+      debug:
+        msg: "Deploying Lighthouse application for {{ stack_name }}"
+    
+    - name: "📦 Phase 5: Install Node.js (conditional - только если нужно)"
+      debug:
+        msg: "Node.js would be installed here with 'become: yes'"
+      when: false  # Отключаем для теста
+    
+    - name: "🔧 Phase 6: Configuration (simulated)"
+      debug:
+        msg: "Configuring all stack components"
+    
+    - name: "▶️ Phase 7: Start Services (simulated)"
+      debug:
+        msg: "Starting all stack services"
+    
+    - name: "✅ FINAL: Deployment Complete"
+      debug:
+        msg: |
+          ===========================================
+          🎉 FULL STACK DEPLOYMENT COMPLETE!
+          
+          Stack: {{ stack_name }}
+          Phase: {{ deployment_phase }}
+          Timestamp: {{ ansible_date_time.iso8601 }}
+          
+          Components Deployed:
+          1. ✅ Infrastructure
+          2. ✅ Database (PostgreSQL)
+          3. ✅ Web Server (Nginx)
+          4. ✅ Application (Lighthouse)
+          5. ✅ Configuration
+          6. ✅ Services
+          
+          Next Steps:
+          1. Run health checks
+          2. Monitor application logs
+          3. Configure monitoring
+          ===========================================

@@ -1,0 +1,28 @@
+---
+- name: "🚀 Starting full stack deployment"
+  debug:
+    msg: "Deploying stack '{{ stack_name }}' in '{{ environment }}' environment"
+
+- name: "📦 Phase 1: Database deployment"
+  include_role:
+    name: database
+  when: deploy_database | default(true)
+
+- name: "🌐 Phase 2: Web server deployment"
+  include_role:
+    name: web
+  when: deploy_web | default(true)
+
+- name: "🚀 Phase 3: Application deployment"
+  include_role:
+    name: app
+  when: deploy_app | default(true)
+
+- name: "✅ Phase 4: Verification"
+  debug:
+    msg: |
+      Stack deployment completed!
+      Components deployed:
+      - Database: {{ deploy_database | ternary('✓', '✗') }}
+      - Web: {{ deploy_web | ternary('✓', '✗') }}
+      - App: {{ deploy_app | ternary('✓', '✗') }}

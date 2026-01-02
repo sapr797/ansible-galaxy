@@ -1,0 +1,7 @@
+---
+- name: Test Lighthouse Role
+  hosts: localhost
+  become: yes  # Добавляем sudo права
+  
+  roles:
+    - role: lighthouse

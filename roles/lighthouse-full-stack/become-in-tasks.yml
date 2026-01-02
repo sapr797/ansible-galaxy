@@ -1,0 +1,43 @@
+---
+- name: "🔧 Stack Deployment with Selective Become"
+  hosts: localhost
+  gather_facts: yes
+  connection: local
+  
+  tasks:
+    - name: "📋 Show deployment info"
+      debug:
+        msg: "Starting stack deployment without root"
+    
+    - name: "🔄 Update system (requires sudo)"
+      become: yes
+      become_user: root
+      apt:
+        update_cache: yes
+      ignore_errors: yes  # Игнорируем ошибки с репозиториями
+      when: ansible_os_family == "Debian"
+    
+    - name: "📦 Install Node.js (simulated with become)"
+      become: yes
+      debug:
+        msg: "Installing Node.js with apt (requires sudo)"
+      # Реальная команда была бы:
+      # apt:
+      #   name: nodejs
+      #   state: present
+    
+    - name: "🌐 Configure web server (simulated without become)"
+      debug:
+        msg: "Configuring web server (no sudo needed for simulation)"
+    
+    - name: "🚀 Deploy app code (simulated without become)"
+      debug:
+        msg: "Deploying application code (no sudo needed for simulation)"
+    
+    - name: "✅ Final verification"
+      debug:
+        msg: |
+          Deployment completed at: {{ ansible_date_time.iso8601 }}
+          
+          Note: Some tasks required sudo, others didn't.
+          This is a common pattern in real deployments.

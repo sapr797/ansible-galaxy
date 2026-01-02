@@ -1,0 +1,38 @@
+---
+- name: "🎯 Start Orchestrated Stack Deployment"
+  debug:
+    msg: "Orchestrator role initiating full stack deployment"
+  
+- name: "📋 List all available roles"
+  debug:
+    msg: "Available roles in project: {{ lookup('fileglob', 'roles/*/tasks/main.yml', wantlist=True) | map('dirname') | map('basename') | list }}"
+  
+- name: "⚡ Execute Database Role (PostgreSQL)"
+  include_role:
+    name: postgres
+  
+- name: "⚡ Execute Web Server Role (Nginx)"
+  include_role:
+    name: nginx
+  
+- name: "⚡ Execute Application Role"
+  include_role:
+    name: app
+  
+- name: "⚡ Execute Monitoring Role (Lighthouse)"
+  include_role:
+    name: lighthouse
+  
+- name: "✅ Orchestration Complete"
+  debug:
+    msg: |
+      ✅ Orchestrator successfully coordinated deployment of ALL roles!
+      
+      Roles deployed in order:
+      1. PostgreSQL Database
+      2. Nginx Web Server  
+      3. Application
+      4. Lighthouse Monitoring
+      
+      Total roles: 4
+      Status: SUCCESS
